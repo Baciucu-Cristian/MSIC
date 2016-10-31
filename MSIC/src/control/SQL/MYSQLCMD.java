@@ -386,8 +386,16 @@ public class MYSQLCMD {
 
             while (rs.next())
             {
-                mylist.add(new HoursFormations(rs.getInt("ID"), rs.getString("DENUMIRE_DEPARTAMENT"), rs.getString("DENUMIRE_COMPLETA"), rs.getString("DENUMIRE_MATERIE"),
-                    rs.getString("DENUMIRE_ACTIVITATE"), rs.getInt("ORE"), rs.getInt("SEMESTRU")));
+            	HoursFormations hoursFormations = new HoursFormations();
+            	hoursFormations.id = rs.getInt("ID");
+            	hoursFormations.departament  = rs.getString("DENUMIRE_DEPARTAMENT");
+            	hoursFormations.formatiune = rs.getString("DENUMIRE_COMPLETA");
+            	hoursFormations.materie = rs.getString("DENUMIRE_MATERIE");
+            	hoursFormations.activitate = rs.getString("DENUMIRE_ACTIVITATE");
+            	hoursFormations.ore = rs.getInt("ORE");
+            	hoursFormations.semestru = rs.getInt("SEMESTRU");
+            	
+                mylist.add(hoursFormations);
             }
         }
         for (HoursFormations hoursFormations : mylist)
@@ -404,8 +412,17 @@ public class MYSQLCMD {
 
             while (rs.next())
             {
-                commonHoursFormation.add(new HoursFormations(rs.getInt("ID"), rs.getString("DENUMIRE_DEPARTAMENT"), rs.getString("DENUMIRE_COMPLETA"), rs.getString("DENUMIRE_MATERIE"),
-                    rs.getString("DENUMIRE_ACTIVITATE"), rs.getInt("ORE"), rs.getInt("SEMESTRU")));
+            	
+            	HoursFormations comHoursFormations = new HoursFormations();
+            	comHoursFormations.id = rs.getInt("ID");
+            	comHoursFormations.departament  = rs.getString("DENUMIRE_DEPARTAMENT");
+            	comHoursFormations.formatiune = rs.getString("DENUMIRE_COMPLETA");
+            	comHoursFormations.materie = rs.getString("DENUMIRE_MATERIE");
+            	comHoursFormations.activitate = rs.getString("DENUMIRE_ACTIVITATE");
+            	comHoursFormations.ore = rs.getInt("ORE");
+            	comHoursFormations.semestru = rs.getInt("SEMESTRU");
+            	
+                commonHoursFormation.add(comHoursFormations);
             }
             
             hoursFormations.materii_comune = commonHoursFormation;

@@ -11,14 +11,54 @@ public class HoursFormations {
     public int ore;
     public int semestru;
     public ArrayList<HoursFormations> materii_comune;
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getDepartament() {
+		return departament;
+	}
+	public void setDepartament(String departament) {
+		this.departament = departament;
+	}
+	public String getFormatiune() {
+		return formatiune;
+	}
+	public void setFormatiune(String formatiune) {
+		this.formatiune = formatiune;
+	}
+	public String getMaterie() {
+		return materie;
+	}
+	public void setMaterie(String materie) {
+		this.materie = materie;
+	}
+	public String getActivitate() {
+		return activitate;
+	}
+	public void setActivitate(String activitate) {
+		this.activitate = activitate;
+	}
+	public int getOre() {
+		return ore;
+	}
+	public void setOre(int ore) {
+		this.ore = ore;
+	}
+	public int getSemestru() {
+		return semestru;
+	}
+	public void setSemestru(int semestru) {
+		this.semestru = semestru;
+	}
+	public ArrayList<HoursFormations> getMaterii_comune() {
+		return materii_comune;
+	}
+	public void setMaterii_comune(ArrayList<HoursFormations> materii_comune) {
+		this.materii_comune = materii_comune;
+	}
 
-    public HoursFormations(int id, String departament, String formatiune, String materie, String activitate, int ore, int semestru) {
-        this.id = id;
-        this.departament = departament;
-        this.formatiune = formatiune;
-        this.materie = materie;
-        this.activitate = activitate;
-        this.ore = ore;
-        this.semestru = semestru;
-    }
+    
 }
