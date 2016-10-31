@@ -321,10 +321,23 @@ public class MYSQLCMD {
             ResultSet rs = statement.executeQuery(select);
             while (rs.next())
             {   
-                mylist.add(new EducationalPlan(rs.getString("DENUMIRE_MATERIE"), rs.getString("DENUMIRE_DEPARTAMENT"), rs.getString("DENUMIRE_COMPLETA"), 
-                        rs.getString("DENUMIRE_EXAMINARE"), rs.getString("DENUMIRE_DISCIPLINA"), rs.getString("DENUMIRE_CATEGORIE"), rs.getString("LICENTA_MASTER"), 
-                        rs.getInt("SEMESTRU"), rs.getInt("AN"), rs.getInt("CURS"), rs.getInt("SEMINAR"), rs.getInt("LUCRARI_PRACTICE"), rs.getFloat("PROIECT"), 
-                        rs.getInt("NUMAR_CREDITE"), rs.getString("AN_UNIVERSITAR")));
+            	EducationalPlan educationalPlan = new EducationalPlan();
+            	educationalPlan.materie = rs.getString("DENUMIRE_MATERIE");
+            	educationalPlan.denumire_departament = rs.getString("DENUMIRE_DEPARTAMENT");
+            	educationalPlan.denumire_formatiune = rs.getString("DENUMIRE_COMPLETA");
+            	educationalPlan.denumire_tip_examinare = rs.getString("DENUMIRE_EXAMINARE");
+            	educationalPlan.denumire_tip_disciplina = rs.getString("DENUMIRE_DISCIPLINA");
+            	educationalPlan.denumire_categorie_disciplina = rs.getString("DENUMIRE_CATEGORIE");
+            	educationalPlan.licenta_master = rs.getString("LICENTA_MASTER");
+            	educationalPlan.semestru = rs.getInt("SEMESTRU");
+            	educationalPlan.an = rs.getInt("AN");
+            	educationalPlan.curs = rs.getInt("CURS");
+            	educationalPlan.seminar = rs.getInt("SEMINAR");
+            	educationalPlan.lucrari_practice = rs.getInt("LUCRARI_PRACTICE");
+            	educationalPlan.proiect = rs.getFloat("PROIECT");
+            	educationalPlan.numar_credite = rs.getInt("NUMAR_CREDITE");
+            	educationalPlan.an_universitar = rs.getString("AN_UNIVERSITAR");
+            	mylist.add(educationalPlan);
             }
         }
         
