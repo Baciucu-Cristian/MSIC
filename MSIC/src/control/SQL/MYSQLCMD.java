@@ -107,9 +107,16 @@ public class MYSQLCMD {
 
             while (rs.next())
             {
-                mylist.add(new Professor(rs.getString("NUME"), rs.getString("CNP"), new Department(rs.getString("ID_DEPARTAMENT"), rs.getString("DENUMIRE_DEPARTAMENT")),
-                    new Function(rs.getInt("ID_FUNCTIE"), rs.getString("DENUMIRE_FUNCTIE"), rs.getInt("PRIORITATE")), rs.getInt("CURS"), rs.getInt("SEMINAR"), 
-                    rs.getInt("LUCRARI_PRACTICE"), rs.getInt("PROIECT")));
+            	Professor professor = new Professor();
+            	professor.nume = rs.getString("NUME");
+            	professor.CNP = rs.getString("CNP");
+            	professor.departament = new Department(rs.getString("ID_DEPARTAMENT"), rs.getString("DENUMIRE_DEPARTAMENT"));
+            	professor.functie = new Function(rs.getInt("ID_FUNCTIE"), rs.getString("DENUMIRE_FUNCTIE"), rs.getInt("PRIORITATE"));
+            	professor.curs = rs.getInt("CURS");
+            	professor.seminar = rs.getInt("SEMINAR");
+            	professor.lucrari_practice = rs.getInt("LUCRARI_PRACTICE");
+            	professor.proiect = rs.getInt("PROIECT");
+                mylist.add(professor);
             }
         }
         
