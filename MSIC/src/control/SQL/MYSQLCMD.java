@@ -38,7 +38,13 @@ public class MYSQLCMD {
     public void openconnection() throws SQLException
     {
         MyConnection mc = new MyConnection();
-        dbConnection = mc.getConnection(oracleSettings.sqlserver, oracleSettings.hostname, oracleSettings.port, oracleSettings.sid, oracleSettings.user, oracleSettings.password);
+        mc.sqlServer = oracleSettings.sqlserver;
+        mc.hostname = oracleSettings.hostname;
+        mc.port = oracleSettings.port;
+        mc.SID = oracleSettings.sid;
+        mc.user = oracleSettings.user;
+        mc.password = oracleSettings.password;
+        dbConnection = mc.getConnection();
         statement = dbConnection.createStatement();
     }
     public void closeconnection() throws SQLException

@@ -6,12 +6,14 @@ import java.sql.SQLException;
 
 public class MyConnection {
     public Connection connection;
+    String sqlServer;
+    String hostname;
+    int port;
+    String SID;
+    String user;
+    String password;
     
-    public MyConnection()
-    {
-    }
-    
-    public Connection getConnection(String sqlServer, String hostname, int port, String SID, String user, String password)
+    public Connection getConnection()
     {
         try
         {
