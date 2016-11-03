@@ -39,6 +39,7 @@ public class ExportAllocatedHours extends PdfPageEventHelper{
     PdfPTable table3;
     PdfPTable table4;
     String[] romanDigits;
+    ExportAllocatedHoursBase exportBase;
     
     public ExportAllocatedHours()
     {  	
@@ -60,6 +61,8 @@ public class ExportAllocatedHours extends PdfPageEventHelper{
         tableBodyFonts.get(6).setColor(new BaseColor(0x8a, 0x2b, 0xe2));
         tableBodyFonts.get(7).setColor(new BaseColor(0x98, 0x5f, 0x0d));
         tableBodyFonts.get(8).setColor(new BaseColor(0x00, 0x80, 0x00));
+        exportBase = new ExportAllocatedHoursBase();
+        exportBase.tableBodyFonts = tableBodyFonts;
         romanDigits = new String[]{"I", "II"};
     }
     
@@ -79,81 +82,7 @@ public class ExportAllocatedHours extends PdfPageEventHelper{
         ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_CENTER, new Phrase(Integer.toString(document.getPageNumber())), document.getPageSize().getWidth() / 2, 15, 0);
     }
     
-    public void createParagraph(String text, Document doc, Font font, int align) throws DocumentException, IOException
-    {
-        Paragraph p = new Paragraph(text, font);
-        p.setAlignment(align);
-        doc.add(p);
-    }
     
-    public PdfPCell CreateHeaderCell(String text, BaseColor backgroundColor)
-    {
-        PdfPCell cell = new PdfPCell(new Phrase(text, tableBodyFonts.get(11)));
-        cell.setBackgroundColor(backgroundColor);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        return cell;
-    }
-    
-    public PdfPCell CreateBodyCell(String text, int align, Font font)
-    {
-        PdfPCell cell = new PdfPCell(new Phrase(text, font));
-        cell.setHorizontalAlignment(align);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        return cell;
-    }
-    
-    public void createTableOneAndTwoHeader(PdfPTable table) throws DocumentException
-    {
-        BaseColor color = new BaseColor(0x16, 0x7f, 0x92);
-        table.setWidthPercentage(100.0f);
-        table.addCell(CreateHeaderCell("Nume", color));
-        table.addCell(CreateHeaderCell("CNP", color));
-        table.addCell(CreateHeaderCell("Departament", color));
-        table.addCell(CreateHeaderCell("Ore Repartizate", color));
-        table.setHeaderRows(1);
-        table.setSplitLate(false);
-        float[] columnWidths = new float[] {16f, 13f, 13f, 60f};
-        table.setWidths(columnWidths);
-    }
-    
-    public void createTableThreeHeader(PdfPTable table) throws DocumentException
-    {
-        BaseColor color = new BaseColor(0x16, 0x7f, 0x92);
-        table.setWidthPercentage(100.0f);
-        table.addCell(CreateHeaderCell("Nume", color));
-        table.addCell(CreateHeaderCell("CNP", color));
-        table.addCell(CreateHeaderCell("Departament", color));
-        table.setHeaderRows(1);
-        table.setSplitLate(false);
-        float[] columnWidths = new float[] {40f, 13f, 47f};
-        table.setWidths(columnWidths);
-    }
-    
-    public void createTableFourHeader(PdfPTable table) throws DocumentException
-    {
-        BaseColor color = new BaseColor(0x16, 0x7f, 0x92);
-        table.setWidthPercentage(100.0f);
-        table.addCell(CreateHeaderCell("Id", color));
-        table.addCell(CreateHeaderCell("Departament", color));
-        table.addCell(CreateHeaderCell("Formatiune", color));
-        table.addCell(CreateHeaderCell("Materie", color));
-        table.addCell(CreateHeaderCell("Activitate", color));
-        table.addCell(CreateHeaderCell("Materii Comune", color));
-        table.addCell(CreateHeaderCell("Ore", color));
-        table.setHeaderRows(1);
-        table.setSplitLate(false);
-        float[] columnWidths = new float[] {3f, 15f, 17f, 16f, 10f, 35f, 4f};
-        table.setWidths(columnWidths);
-    }
-    
-    public void addEmptyRow(PdfPTable table)
-    {
-        for (int i = 0; i < table.getNumberOfColumns(); i++)
-        {
-            table.addCell(CreateBodyCell(" ", Element.ALIGN_LEFT, tableBodyFonts.get(2)));
-        }
-    }
     
     public void ParseProfessors(ArrayList<Professor> professors)
     {
@@ -174,9 +103,9 @@ public class ExportAllocatedHours extends PdfPageEventHelper{
             }
             if (professor.curs + professor.seminar + professor.lucrari_practice + professor.proiect == 0)
             {
-                table1.addCell(CreateBodyCell(professor.nume, Element.ALIGN_CENTER, tableBodyFonts.get(1)));
-                table1.addCell(CreateBodyCell(professor.CNP, Element.ALIGN_LEFT, tableBodyFonts.get(2)));
-                table1.addCell(CreateBodyCell(professor.departament.denumire, Element.ALIGN_LEFT, tableBodyFonts.get(2)));
+                table1.addCell(exportBase.CreateBodyCell(professor.nume, Element.ALIGN_CENTER, tableBodyFonts.get(1)));
+                table1.addCell(exportBase.CreateBodyCell(professor.CNP, Element.ALIGN_LEFT, tableBodyFonts.get(2)));
+                table1.addCell(exportBase.CreateBodyCell(professor.departament.denumire, Element.ALIGN_LEFT, tableBodyFonts.get(2)));
                 table1.addCell(phrase);
             }
             else if (professor.curs + professor.seminar + professor.lucrari_practice + professor.proiect != professor.totalhours)
@@ -188,16 +117,16 @@ public class ExportAllocatedHours extends PdfPageEventHelper{
                 phrase.add(new Chunk("LABORATOR - " + professor.lucrari_practice + "\n", tableBodyFonts.get(6)));
                 phrase.add(new Chunk("PROIECT - " + professor.proiect + "\n", tableBodyFonts.get(7)));
                 phrase.add(new Chunk("TOTAL - " + (professor.curs + professor.seminar + professor.lucrari_practice + professor.proiect), tableBodyFonts.get(8)));
-                table2.addCell(CreateBodyCell(professor.nume, Element.ALIGN_CENTER, tableBodyFonts.get(1)));
-                table2.addCell(CreateBodyCell(professor.CNP, Element.ALIGN_LEFT, tableBodyFonts.get(2)));
-                table2.addCell(CreateBodyCell(professor.departament.denumire, Element.ALIGN_LEFT, tableBodyFonts.get(2)));
+                table2.addCell(exportBase.CreateBodyCell(professor.nume, Element.ALIGN_CENTER, tableBodyFonts.get(1)));
+                table2.addCell(exportBase.CreateBodyCell(professor.CNP, Element.ALIGN_LEFT, tableBodyFonts.get(2)));
+                table2.addCell(exportBase.CreateBodyCell(professor.departament.denumire, Element.ALIGN_LEFT, tableBodyFonts.get(2)));
                 table2.addCell(phrase);
             }
             else
             {
-                table3.addCell(CreateBodyCell(professor.nume, Element.ALIGN_CENTER, tableBodyFonts.get(1)));
-                table3.addCell(CreateBodyCell(professor.CNP, Element.ALIGN_LEFT, tableBodyFonts.get(2)));
-                table3.addCell(CreateBodyCell(professor.departament.denumire, Element.ALIGN_LEFT, tableBodyFonts.get(2)));
+                table3.addCell(exportBase.CreateBodyCell(professor.nume, Element.ALIGN_CENTER, tableBodyFonts.get(1)));
+                table3.addCell(exportBase.CreateBodyCell(professor.CNP, Element.ALIGN_LEFT, tableBodyFonts.get(2)));
+                table3.addCell(exportBase.CreateBodyCell(professor.departament.denumire, Element.ALIGN_LEFT, tableBodyFonts.get(2)));
             }
         }
     }
@@ -207,11 +136,11 @@ public class ExportAllocatedHours extends PdfPageEventHelper{
     	String comSubjects;
         for (HoursFormations item : unallocatedHours)
         {
-            table4.addCell(CreateBodyCell(Integer.toString(item.id), Element.ALIGN_CENTER, tableBodyFonts.get(1)));
-            table4.addCell(CreateBodyCell(item.departament, Element.ALIGN_LEFT, tableBodyFonts.get(2)));
-            table4.addCell(CreateBodyCell(item.formatiune, Element.ALIGN_LEFT, tableBodyFonts.get(2)));
-            table4.addCell(CreateBodyCell(item.materie, Element.ALIGN_LEFT, tableBodyFonts.get(2)));
-            table4.addCell(CreateBodyCell(item.activitate, Element.ALIGN_CENTER, tableBodyFonts.get(2)));
+            table4.addCell(exportBase.CreateBodyCell(Integer.toString(item.id), Element.ALIGN_CENTER, tableBodyFonts.get(1)));
+            table4.addCell(exportBase.CreateBodyCell(item.departament, Element.ALIGN_LEFT, tableBodyFonts.get(2)));
+            table4.addCell(exportBase.CreateBodyCell(item.formatiune, Element.ALIGN_LEFT, tableBodyFonts.get(2)));
+            table4.addCell(exportBase.CreateBodyCell(item.materie, Element.ALIGN_LEFT, tableBodyFonts.get(2)));
+            table4.addCell(exportBase.CreateBodyCell(item.activitate, Element.ALIGN_CENTER, tableBodyFonts.get(2)));
             
             comSubjects = "";
             for (HoursFormations common : item.materii_comune)
@@ -219,8 +148,8 @@ public class ExportAllocatedHours extends PdfPageEventHelper{
                 comSubjects += common.materie + " -> " + common.activitate + " -> " + common.formatiune + " -> " + common.departament + " -> " + common.id + ", ";
             }
             
-            table4.addCell(CreateBodyCell(comSubjects, Element.ALIGN_LEFT, tableBodyFonts.get(2)));
-            table4.addCell(CreateBodyCell(Integer.toString(item.ore), Element.ALIGN_CENTER, tableBodyFonts.get(2)));
+            table4.addCell(exportBase.CreateBodyCell(comSubjects, Element.ALIGN_LEFT, tableBodyFonts.get(2)));
+            table4.addCell(exportBase.CreateBodyCell(Integer.toString(item.ore), Element.ALIGN_CENTER, tableBodyFonts.get(2)));
         }
     }
     
@@ -260,37 +189,37 @@ public class ExportAllocatedHours extends PdfPageEventHelper{
         table3 = new PdfPTable(3);
         table4 = new PdfPTable(7);
         
-        createTableOneAndTwoHeader(table1);
-        createTableOneAndTwoHeader(table2);
-        createTableThreeHeader(table3);
-        createTableFourHeader(table4);
+        exportBase.createTableOneAndTwoHeader(table1);
+        exportBase.createTableOneAndTwoHeader(table2);
+        exportBase.createTableThreeHeader(table3);
+        exportBase.createTableFourHeader(table4);
         
         ParseProfessors(professors);
         ParseHoursFormation(unallocatedHours);
         
         try
         {
-            createParagraph("REPARTIZARE ORE - SEMESTRUL " + romanDigits[semester - 1], document, tableBodyFonts.get(10), Element.ALIGN_CENTER);
+        	exportBase.createParagraph("REPARTIZARE ORE - SEMESTRUL " + romanDigits[semester - 1], document, tableBodyFonts.get(10), Element.ALIGN_CENTER);
             document.add(new Phrase("\n", newLine));
             document.add(new Phrase("\n", newLine));
-            createParagraph("        CADRE DIDACTICE CU CATEDRA COMPLETA", document, tableBodyFonts.get(9), Element.ALIGN_LEFT);
+            exportBase.createParagraph("        CADRE DIDACTICE CU CATEDRA COMPLETA", document, tableBodyFonts.get(9), Element.ALIGN_LEFT);
             document.add(new Phrase("\n", newLine));
-            addEmptyRow(table1);
+            exportBase.addEmptyRow(table1);
             document.add(table1);
             document.newPage();
-            createParagraph("        CADRE DIDACTICE CU CATEDRA INCOMPLETA", document, tableBodyFonts.get(9), Element.ALIGN_LEFT);
+            exportBase.createParagraph("        CADRE DIDACTICE CU CATEDRA INCOMPLETA", document, tableBodyFonts.get(9), Element.ALIGN_LEFT);
             document.add(new Phrase("\n", newLine));
-            addEmptyRow(table2);
+            exportBase.addEmptyRow(table2);
             document.add(table2);
             document.newPage();
-            createParagraph("        CADRE DIDACTICE FARA CATEDRA", document, tableBodyFonts.get(9), Element.ALIGN_LEFT);
+            exportBase.createParagraph("        CADRE DIDACTICE FARA CATEDRA", document, tableBodyFonts.get(9), Element.ALIGN_LEFT);
             document.add(new Phrase("\n", newLine));
-            addEmptyRow(table3);
+            exportBase.addEmptyRow(table3);
             document.add(table3);
             document.newPage();
-            createParagraph("        ORE NEREPARTIZATE", document, tableBodyFonts.get(9), Element.ALIGN_LEFT);
+            exportBase.createParagraph("        ORE NEREPARTIZATE", document, tableBodyFonts.get(9), Element.ALIGN_LEFT);
             document.add(new Phrase("\n", newLine));
-            addEmptyRow(table4);
+            exportBase.addEmptyRow(table4);
             document.add(table4);
         }
         catch (IOException ex)
