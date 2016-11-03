@@ -19,7 +19,6 @@ public class OracleSettings {
     public String password;
     public String schemaName;
     public Properties oracleProperties;
-    public String error;
     public String webSiteLocation;
     String localPath;
     
@@ -48,7 +47,7 @@ public class OracleSettings {
     
     public void writeData()
     {
-        error = "no error";
+    	String error = "no error";
         oracleProperties.setProperty("port", Integer.toString(port));
         oracleProperties.setProperty("hostname", hostname);
         oracleProperties.setProperty("sid", sid);
@@ -98,7 +97,7 @@ public class OracleSettings {
     
     public boolean readData()
     {
-        error = "no error";
+    	String error = "no error";
         try
         {
             FileInputStream fileIn = new FileInputStream(webSiteLocation + localPath);
