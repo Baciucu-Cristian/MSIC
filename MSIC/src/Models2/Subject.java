@@ -1,4 +1,4 @@
-package Models;
+package Models2;
 
 public class Subject {
     public int id_materie;

@@ -1,4 +1,4 @@
-package Models;
+package Models2;
 
 public class SubjectCategory {
     public int id_categorie_disciplina;

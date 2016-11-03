@@ -20,7 +20,7 @@ public class MyConnection {
             Class.forName(sqlServer);
         }
         catch(ClassNotFoundException e)
-        {
+        {	
             System.out.println("Driver-ul MySql nu a fost gasit");
         }
         connection = null;

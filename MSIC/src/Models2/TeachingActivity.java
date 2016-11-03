@@ -1,4 +1,4 @@
-package Models;
+package Models2;
 
 public class TeachingActivity {
     public int id_activitate;

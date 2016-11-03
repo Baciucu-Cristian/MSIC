@@ -1,4 +1,4 @@
-package Models;
+package Models2;
 
 public class SubjectType {
     public int id_tip_disciplina;
