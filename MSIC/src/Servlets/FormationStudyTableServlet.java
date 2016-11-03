@@ -65,14 +65,11 @@ public class FormationStudyTableServlet extends HttpServlet {
                 
                 if (req.getParameter("formation_study_parent").equals("0") || req.getParameter("formation_study_parent").equals(req.getParameter("formation_study_id")))
                 {
-                    query = "insert into " + sqlcmd.schemaName + ".FORMATIUNE_DE_STUDIU(id_formatiune, denumire, denumire_completa) values(" + req.getParameter("formation_study_id")
-                            + ",'" + req.getParameter("formation_study_name") + "','" + req.getParameter("formation_study_complete_name") + "')";
+                    query = "insert into " + sqlcmd.schemaName + ".FORMATIUNE_DE_STUDIU(id_formatiune, denumire, denumire_completa) values(" + req.getParameter("formation_study_id") + ",'" + req.getParameter("formation_study_name") + "','" + req.getParameter("formation_study_complete_name") + "')";
                 }
                 else
                 {
-                    query = "insert into " + sqlcmd.schemaName + ".FORMATIUNE_DE_STUDIU(id_formatiune, denumire, denumire_completa, parinte) values("
-                            + req.getParameter("formation_study_id") + ",'" + req.getParameter("formation_study_name") + "','" + req.getParameter("formation_study_complete_name")
-                            + "'," + req.getParameter("formation_study_parent") + ")";
+                    query = "insert into " + sqlcmd.schemaName + ".FORMATIUNE_DE_STUDIU(id_formatiune, denumire, denumire_completa, parinte) values(" + req.getParameter("formation_study_id") + ",'" + req.getParameter("formation_study_name") + "','" + req.getParameter("formation_study_complete_name") + "'," + req.getParameter("formation_study_parent") + ")";
                 }
                 result = "Formatiunea de studiu a fost adaugata";
                 
@@ -81,16 +78,13 @@ public class FormationStudyTableServlet extends HttpServlet {
                 
                 if (req.getParameter("formation_study_parent").equals("0"))
                 {
-                    query = "update " + sqlcmd.schemaName + ".FORMATIUNE_DE_STUDIU set denumire='" + req.getParameter("formation_study_name") + "', denumire_completa='" 
-                            + req.getParameter("formation_study_complete_name") + "', parinte=null where id_formatiune=" + req.getParameter("formation_study_id");
+                    query = "update " + sqlcmd.schemaName + ".FORMATIUNE_DE_STUDIU set denumire='" + req.getParameter("formation_study_name") + "', denumire_completa='" + req.getParameter("formation_study_complete_name") + "', parinte=null where id_formatiune=" + req.getParameter("formation_study_id");
                     
                     completeName = req.getParameter("formation_study_complete_name");
                 }
                 else
                 {
-                    query = "update " + sqlcmd.schemaName + ".FORMATIUNE_DE_STUDIU set denumire='" + req.getParameter("formation_study_name") + "', denumire_completa='" 
-                            + req.getParameter("formation_study_complete_name") + " -> " + req.getParameter("formation_study_name") + "', parinte="
-                            + req.getParameter("formation_study_parent") + " where id_formatiune=" + req.getParameter("formation_study_id");
+                    query = "update " + sqlcmd.schemaName + ".FORMATIUNE_DE_STUDIU set denumire='" + req.getParameter("formation_study_name") + "', denumire_completa='" + req.getParameter("formation_study_complete_name") + " -> " + req.getParameter("formation_study_name") + "', parinte="+ req.getParameter("formation_study_parent") + " where id_formatiune=" + req.getParameter("formation_study_id");
                     completeName = req.getParameter("formation_study_complete_name").split(" -> ")[0];
                 }
                 result = "Formatiunea de studiu si subformatiunile ale acesteia au fost actualizate";
@@ -101,9 +95,6 @@ public class FormationStudyTableServlet extends HttpServlet {
                 query = "delete from " + sqlcmd.schemaName + ".FORMATIUNE_DE_STUDIU where id_formatiune=" + req.getParameter("formation_study_id");
                 result = "Formatiunea de studiu si subformatiunile ale acesteia au fost sterse";
                 
-                break;
-                
-            default:
                 break;
         }
         

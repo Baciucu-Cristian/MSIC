@@ -81,6 +81,16 @@ public class EducationalPlanGenerationTableServlet extends HttpServlet {
         resp.getWriter().close();
     }
     
+    private String ExportPdf(ArrayList<EducationalPlan> educationalPlan, ArrayList<EducationalPlanHoursAndCredits> educational_plan_hours, String webSiteLocation, String localPath) throws FileNotFoundException, DocumentException
+    {
+    	pdfInformation.readData();
+        export.facultate = pdfInformation.facultate;
+        export.rector = pdfInformation.rector;
+        export.director_departament = pdfInformation.director_departament;
+        export.decan = pdfInformation.decan;
+        return export.exportToPDF(educationalPlan, educational_plan_hours, webSiteLocation, localPath);
+    }
+    
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
@@ -89,23 +99,17 @@ public class EducationalPlanGenerationTableServlet extends HttpServlet {
         Type hoursType = new TypeToken<ArrayList<EducationalPlanHoursAndCredits>>(){}.getType();
         
         String result = null;
-        resp.setContentType("text/plain");
         
         ArrayList<EducationalPlan> educationalPlan = gson.fromJson(req.getParameter("educational_plan_subjects"), educationalPlanType);
         ArrayList<EducationalPlanHoursAndCredits> educational_plan_hours = gson.fromJson(req.getParameter("educational_plan_hours"), hoursType);
         
-        String localPath = "\\Planuri de invatamant\\" + getShortName(req.getParameter("educational_plan_department_name")) + "_" + 
-                getShortName(req.getParameter("educational_plan_formation_study")) + "_" + req.getParameter("educational_plan_years") + "_plan_educational.pdf";
+        String localPath = "\\Planuri de invatamant\\" + getShortName(req.getParameter("educational_plan_department_name")) + "_" + getShortName(req.getParameter("educational_plan_formation_study")) + "_" + req.getParameter("educational_plan_years") + "_plan_educational.pdf";
         
         try
         {
-            if (sqlcmd.countRows("select count(*) as randuri from " + sqlcmd.schemaName + ".PLAN_DE_INVATAMANT_LINK where id_departament='" + 
-                    req.getParameter("educational_plan_department_id") + "' and id_formatiune=" + req.getParameter("educational_plan_formation_study_id") +
-                    " and an_universitar='" + req.getParameter("educational_plan_years") + "'") == 0)
+            if (sqlcmd.countRows("select count(*) as randuri from " + sqlcmd.schemaName + ".PLAN_DE_INVATAMANT_LINK where id_departament='" + req.getParameter("educational_plan_department_id") + "' and id_formatiune=" + req.getParameter("educational_plan_formation_study_id") +" and an_universitar='" + req.getParameter("educational_plan_years") + "'") == 0)
             {
-                sqlcmd.execute("insert into " + sqlcmd.schemaName + ".PLAN_DE_INVATAMANT_LINK(id_departament, id_formatiune, an_universitar, nume_pdf) values('" +
-                    req.getParameter("educational_plan_department_id") + "', " + req.getParameter("educational_plan_formation_study_id") + ", '" + 
-                    req.getParameter("educational_plan_years") + "','" + localPath + "')");
+                sqlcmd.execute("insert into " + sqlcmd.schemaName + ".PLAN_DE_INVATAMANT_LINK(id_departament, id_formatiune, an_universitar, nume_pdf) values('" + req.getParameter("educational_plan_department_id") + "', " + req.getParameter("educational_plan_formation_study_id") + ", '" + req.getParameter("educational_plan_years") + "','" + localPath + "')");
             }
         }
         catch (SQLException ex)
@@ -115,20 +119,12 @@ public class EducationalPlanGenerationTableServlet extends HttpServlet {
         if (result == null)
         {
             ServletContext servletContext = this.getServletContext();
-
             String webSiteLocation = servletContext.getRealPath("");
-
-            export = new ExportEducationalPlan(req.getParameter("educational_plan_department_name"), req.getParameter("educational_plan_department_id"), 
-                    req.getParameter("educational_plan_formation_study"), Integer.parseInt(req.getParameter("educational_plan_year")));
+            export = new ExportEducationalPlan(req.getParameter("educational_plan_department_name"), req.getParameter("educational_plan_department_id"), req.getParameter("educational_plan_formation_study"), Integer.parseInt(req.getParameter("educational_plan_year")));
 
             try
             {
-                pdfInformation.readData();
-                export.facultate = pdfInformation.facultate;
-                export.rector = pdfInformation.rector;
-                export.director_departament = pdfInformation.director_departament;
-                export.decan = pdfInformation.decan;
-                result = export.exportToPDF(educationalPlan, educational_plan_hours, webSiteLocation, localPath);
+                result = ExportPdf(educationalPlan, educational_plan_hours, webSiteLocation, localPath);
             }
             catch (DocumentException | FileNotFoundException ex)
             {
@@ -142,9 +138,7 @@ public class EducationalPlanGenerationTableServlet extends HttpServlet {
             {
                 try
                 {
-                    sqlcmd.execute("delete from " + sqlcmd.schemaName + ".PLAN_DE_INVATAMANT_LINK where id_departament='" + 
-                    req.getParameter("educational_plan_department_id") + "' and id_formatiune=" + req.getParameter("educational_plan_formation_study_id") +
-                    " and an_universitar='" + req.getParameter("educational_plan_years") + "'");
+                    sqlcmd.execute("delete from " + sqlcmd.schemaName + ".PLAN_DE_INVATAMANT_LINK where id_departament='" + req.getParameter("educational_plan_department_id") + "' and id_formatiune=" + req.getParameter("educational_plan_formation_study_id") +" and an_universitar='" + req.getParameter("educational_plan_years") + "'");
                 }
                 catch (SQLException ex1)
                 {
@@ -153,7 +147,6 @@ public class EducationalPlanGenerationTableServlet extends HttpServlet {
             }
         }
         resp.getWriter().print(result);
-        resp.getWriter().flush();
         resp.getWriter().close();
     }
 }

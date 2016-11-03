@@ -62,6 +62,28 @@ public class ProfessorTableServlet extends HttpServlet {
         resp.getWriter().close();
     }
     
+    private void InsertProfessor(String query, String query2, HttpServletRequest req, Gson gson, Type type)
+    {
+    	 ArrayList<Integer> insertProfessorSubjects = gson.fromJson(req.getParameter("insertProfessorSubjects"), type);
+         ArrayList<Integer> insertProfessorFormationStudy = gson.fromJson(req.getParameter("insertProfessorFormationStudy"), type);
+         
+         query = "insert into " + sqlcmd.schemaName + ".PROFESOR(cnp, nume, id_departament, id_functie, curs, seminar, lucrari_practice, proiect) values('" + req.getParameter("professor_cnp") + "','" + req.getParameter("professor_name") + "','" + req.getParameter("professor_department") + "'," + req.getParameter("professor_function") + "," + req.getParameter("professor_course") + "," + req.getParameter("professor_seminar") + "," + req.getParameter("professor_laboratory") + "," + req.getParameter("professor_project") + ")";
+         
+         query2 = "BEGIN\n" + "delete from " + sqlcmd.schemaName + ".PROFESOR_MATERIE where cnp='" + req.getParameter("professor_cnp") + "';\n";
+         for (int i = 0; i < insertProfessorSubjects.size(); i++)
+         {
+             query2 += "insert into " + sqlcmd.schemaName + ".PROFESOR_MATERIE(cnp, id_materie, prioritate) values('" + req.getParameter("professor_cnp") + "'," + insertProfessorSubjects.get(i) + "," + (i + 1) + ");\n";
+         }
+         
+         query2 += "delete from " + sqlcmd.schemaName + ".PROFESOR_FORMATIUNE where cnp='" + req.getParameter("professor_cnp") + "';\n";
+         for (int i = 0; i < insertProfessorFormationStudy.size(); i++)
+         {
+             query2 += "insert into " + sqlcmd.schemaName + ".PROFESOR_FORMATIUNE(cnp, id_formatiune, prioritate) values('" + req.getParameter("professor_cnp") + "'," + insertProfessorFormationStudy.get(i) + "," + (i + 1) + ");\n";
+         }
+         
+         query2 += "END;\n";
+    }
+    
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
@@ -74,29 +96,8 @@ public class ProfessorTableServlet extends HttpServlet {
         
         switch (operation) {
             case "insert":
-                ArrayList<Integer> insertProfessorSubjects = gson.fromJson(req.getParameter("insertProfessorSubjects"), type);
-                ArrayList<Integer> insertProfessorFormationStudy = gson.fromJson(req.getParameter("insertProfessorFormationStudy"), type);
-                
-                query = "insert into " + sqlcmd.schemaName + ".PROFESOR(cnp, nume, id_departament, id_functie, curs, seminar, lucrari_practice, proiect) values('" + 
-                        req.getParameter("professor_cnp") + "','" + req.getParameter("professor_name") + "','" + req.getParameter("professor_department") + "'," + 
-                        req.getParameter("professor_function") + "," + req.getParameter("professor_course") + "," + req.getParameter("professor_seminar") + "," + 
-                        req.getParameter("professor_laboratory") + "," + req.getParameter("professor_project") + ")";
-                
-                query2 = "BEGIN\n" + "delete from " + sqlcmd.schemaName + ".PROFESOR_MATERIE where cnp='" + req.getParameter("professor_cnp") + "';\n";
-                for (int i = 0; i < insertProfessorSubjects.size(); i++)
-                {
-                    query2 += "insert into " + sqlcmd.schemaName + ".PROFESOR_MATERIE(cnp, id_materie, prioritate) values('" + req.getParameter("professor_cnp") + "'," + 
-                            insertProfessorSubjects.get(i) + "," + (i + 1) + ");\n";
-                }
-                
-                query2 += "delete from " + sqlcmd.schemaName + ".PROFESOR_FORMATIUNE where cnp='" + req.getParameter("professor_cnp") + "';\n";
-                for (int i = 0; i < insertProfessorFormationStudy.size(); i++)
-                {
-                    query2 += "insert into " + sqlcmd.schemaName + ".PROFESOR_FORMATIUNE(cnp, id_formatiune, prioritate) values('" + req.getParameter("professor_cnp") + "'," + 
-                            insertProfessorFormationStudy.get(i) + "," + (i + 1) + ");\n";
-                }
-                
-                query2 += "END;\n";
+               
+            	InsertProfessor(query, query2, req, gson, type);
                 result = "Cadrul didactic a fost adaugat";
                 
                 break;
@@ -104,23 +105,18 @@ public class ProfessorTableServlet extends HttpServlet {
                 ArrayList<Integer> insertNewProfessorSubjects = gson.fromJson(req.getParameter("insertProfessorSubjects"), type);
                 ArrayList<Integer> insertNewProfessorFormationStudy = gson.fromJson(req.getParameter("insertProfessorFormationStudy"), type);
                 
-                query = "update " + sqlcmd.schemaName + ".PROFESOR set nume='" + req.getParameter("professor_name") + "', id_departament='" +
-                        req.getParameter("professor_department") + "', id_functie=" + req.getParameter("professor_function") + ", curs=" + req.getParameter("professor_course") +
-                        ", seminar=" +req.getParameter("professor_seminar") + ", lucrari_practice=" + req.getParameter("professor_laboratory") + ", proiect=" +
-                        req.getParameter("professor_project") + " where cnp='" + req.getParameter("professor_cnp") + "'";
+                query = "update " + sqlcmd.schemaName + ".PROFESOR set nume='" + req.getParameter("professor_name") + "', id_departament='" + req.getParameter("professor_department") + "', id_functie=" + req.getParameter("professor_function") + ", curs=" + req.getParameter("professor_course") +", seminar=" +req.getParameter("professor_seminar") + ", lucrari_practice=" + req.getParameter("professor_laboratory") + ", proiect=" +req.getParameter("professor_project") + " where cnp='" + req.getParameter("professor_cnp") + "'";
                 
                 query2 = "BEGIN\n" + "delete from " + sqlcmd.schemaName + ".PROFESOR_MATERIE where cnp='" + req.getParameter("professor_cnp") + "';\n";
                 for (int i = 0; i < insertNewProfessorSubjects.size(); i++)
                 {
-                    query2 += "insert into " + sqlcmd.schemaName + ".PROFESOR_MATERIE(cnp, id_materie, prioritate) values('" + req.getParameter("professor_cnp") + "'," + 
-                            insertNewProfessorSubjects.get(i) + "," + (i + 1) + ");\n";
+                    query2 += "insert into " + sqlcmd.schemaName + ".PROFESOR_MATERIE(cnp, id_materie, prioritate) values('" + req.getParameter("professor_cnp") + "'," + insertNewProfessorSubjects.get(i) + "," + (i + 1) + ");\n";
                 }
                 
                 query2 += "delete from " + sqlcmd.schemaName + ".PROFESOR_FORMATIUNE where cnp='" + req.getParameter("professor_cnp") + "';\n";
                 for (int i = 0; i < insertNewProfessorFormationStudy.size(); i++)
                 {
-                    query2 += "insert into " + sqlcmd.schemaName + ".PROFESOR_FORMATIUNE(cnp, id_formatiune, prioritate) values('" + req.getParameter("professor_cnp") + "'," + 
-                            insertNewProfessorFormationStudy.get(i) + "," + (i + 1) + ");\n";
+                    query2 += "insert into " + sqlcmd.schemaName + ".PROFESOR_FORMATIUNE(cnp, id_formatiune, prioritate) values('" + req.getParameter("professor_cnp") + "'," + insertNewProfessorFormationStudy.get(i) + "," + (i + 1) + ");\n";
                 }
                 
                 query2 += "END;\n";
