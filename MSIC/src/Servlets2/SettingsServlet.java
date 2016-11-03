@@ -1,4 +1,4 @@
-package Servlets;
+package Servlets2;
 
 import control.SiteSettings.AdminPassword;
 import control.SiteSettings.PDFInformation;

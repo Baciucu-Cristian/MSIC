@@ -1,19 +1,18 @@
-package Servlets;
+package Servlets2;
 
 import com.google.gson.Gson;
 import control.SQL.MYSQLCMD;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class SubjectTableServlet extends HttpServlet {
-
+public class UserTableServlet extends HttpServlet {
+    
     MYSQLCMD sqlcmd;
 
     @Override
@@ -32,7 +31,7 @@ public class SubjectTableServlet extends HttpServlet {
         resp.setContentType("text/plain");
         try
         {
-            resp.getWriter().print(gson.toJson(sqlcmd.getSubjects("select * from " + sqlcmd.schemaName + ".MATERIE order by denumire")));
+            resp.getWriter().print(gson.toJson(sqlcmd.getUsers("select * from " + sqlcmd.schemaName + ".PERSONAL order by email")));
         }
         catch (SQLException ex)
         {
@@ -51,22 +50,18 @@ public class SubjectTableServlet extends HttpServlet {
         String result = null;
         
         switch (operation) {
-            case "insert":
-                query = "insert into " + sqlcmd.schemaName + ".MATERIE(id_materie, denumire) values(" + req.getParameter("subject_id") + ",'"
-                        + req.getParameter("subject_name") + "')";
-                result = "Materia a fost adaugata";
+            case "changepassword":
+     
+                query = "update " + sqlcmd.schemaName + ".PERSONAL set parola='" + req.getParameter("password") + "' where email='" +
+                        req.getParameter("email") + "'";
+                result = "Parola a fost actualizata";
                 
                 break;
-            case "update":
                 
-                query = "update " + sqlcmd.schemaName + ".MATERIE set denumire='" + req.getParameter("subject_name") + "' where id_materie=" + req.getParameter("subject_id");
-                result = "Materia a fost actualizata";
-                
-                break;
             case "delete":
                 
-                query = "delete from " + sqlcmd.schemaName + ".MATERIE where id_materie=" + req.getParameter("subject_id");
-                result = "Materia a fost stearsa";
+                query = "delete from " + sqlcmd.schemaName + ".PERSONAL where email='" + req.getParameter("email") + "'";
+                result = "Utilizatorul a fost sters";
                 
                 break;
                 

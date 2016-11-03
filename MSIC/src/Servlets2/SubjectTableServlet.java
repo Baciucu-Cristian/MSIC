@@ -1,4 +1,4 @@
-package Servlets;
+package Servlets2;
 
 import com.google.gson.Gson;
 import control.SQL.MYSQLCMD;
@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class SubjectTypeTableServlet extends HttpServlet {
+public class SubjectTableServlet extends HttpServlet {
 
     MYSQLCMD sqlcmd;
 
@@ -32,7 +32,7 @@ public class SubjectTypeTableServlet extends HttpServlet {
         resp.setContentType("text/plain");
         try
         {
-            resp.getWriter().print(gson.toJson(sqlcmd.getSubjectTypes("select * from " + sqlcmd.schemaName + ".TIP_DISCIPLINA order by prioritate")));
+            resp.getWriter().print(gson.toJson(sqlcmd.getSubjects("select * from " + sqlcmd.schemaName + ".MATERIE order by denumire")));
         }
         catch (SQLException ex)
         {
@@ -52,23 +52,21 @@ public class SubjectTypeTableServlet extends HttpServlet {
         
         switch (operation) {
             case "insert":
-                
-                query = "insert into " + sqlcmd.schemaName + ".TIP_DISCIPLINA(id_tip_disciplina, denumire, prioritate) values(" + req.getParameter("subjectType_id") + ",'" +
-                        req.getParameter("subjectType_name") + "', " + req.getParameter("subjectType_priority") + ")";
-                result = "Tipul de disciplina a fost adaugat";
+                query = "insert into " + sqlcmd.schemaName + ".MATERIE(id_materie, denumire) values(" + req.getParameter("subject_id") + ",'"
+                        + req.getParameter("subject_name") + "')";
+                result = "Materia a fost adaugata";
                 
                 break;
             case "update":
                 
-                query = "update " + sqlcmd.schemaName + ".TIP_DISCIPLINA set denumire='" + req.getParameter("subjectType_name") + "', prioritate=" + 
-                        req.getParameter("subjectType_priority") + " where id_tip_disciplina=" + req.getParameter("subjectType_id");
-                result = "Tipul de disciplina a fost actualizat";
+                query = "update " + sqlcmd.schemaName + ".MATERIE set denumire='" + req.getParameter("subject_name") + "' where id_materie=" + req.getParameter("subject_id");
+                result = "Materia a fost actualizata";
                 
                 break;
             case "delete":
                 
-                query = "delete from " + sqlcmd.schemaName + ".TIP_DISCIPLINA where id_tip_disciplina=" + req.getParameter("subjectType_id");
-                result = "Tipul de disciplina a fost sters";
+                query = "delete from " + sqlcmd.schemaName + ".MATERIE where id_materie=" + req.getParameter("subject_id");
+                result = "Materia a fost stearsa";
                 
                 break;
                 

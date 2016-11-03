@@ -1,4 +1,4 @@
-package Servlets;
+package Servlets2;
 
 import com.google.gson.Gson;
 import control.SQL.MYSQLCMD;

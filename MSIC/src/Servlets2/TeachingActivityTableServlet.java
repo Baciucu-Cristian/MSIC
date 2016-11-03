@@ -1,18 +1,19 @@
-package Servlets;
+package Servlets2;
 
 import com.google.gson.Gson;
 import control.SQL.MYSQLCMD;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class UserTableServlet extends HttpServlet {
-    
+public class TeachingActivityTableServlet extends HttpServlet {
+
     MYSQLCMD sqlcmd;
 
     @Override
@@ -31,7 +32,7 @@ public class UserTableServlet extends HttpServlet {
         resp.setContentType("text/plain");
         try
         {
-            resp.getWriter().print(gson.toJson(sqlcmd.getUsers("select * from " + sqlcmd.schemaName + ".PERSONAL order by email")));
+            resp.getWriter().print(gson.toJson(sqlcmd.getTeachingActivities("select * from " + sqlcmd.schemaName + ".ACTIVITATE_DE_PREDARE")));
         }
         catch (SQLException ex)
         {
@@ -50,18 +51,24 @@ public class UserTableServlet extends HttpServlet {
         String result = null;
         
         switch (operation) {
-            case "changepassword":
-     
-                query = "update " + sqlcmd.schemaName + ".PERSONAL set parola='" + req.getParameter("password") + "' where email='" +
-                        req.getParameter("email") + "'";
-                result = "Parola a fost actualizata";
+            case "insert":
+                
+                query = "insert into " + sqlcmd.schemaName + ".ACTIVITATE_DE_PREDARE(id_activitate, denumire) values(" + req.getParameter("teachingActivity_id") + ",'" +
+                        req.getParameter("teachingActivity_name") + "')";
+                result = "Activitatea de predare a fost adaugata";
                 
                 break;
+            case "update":
                 
+                query = "update " + sqlcmd.schemaName + ".ACTIVITATE_DE_PREDARE set denumire='" + req.getParameter("teachingActivity_name") + "' where id_activitate=" +
+                        req.getParameter("teachingActivity_id");
+                result = "Activitatea de predare a fost actualizata";
+                
+                break;
             case "delete":
                 
-                query = "delete from " + sqlcmd.schemaName + ".PERSONAL where email='" + req.getParameter("email") + "'";
-                result = "Utilizatorul a fost sters";
+                query = "delete from " + sqlcmd.schemaName + ".ACTIVITATE_DE_PREDARE where id_activitate=" + req.getParameter("teachingActivity_id");
+                result = "Activitatea de predare a fost stearsa";
                 
                 break;
                 
