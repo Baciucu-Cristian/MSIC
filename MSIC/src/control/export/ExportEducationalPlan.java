@@ -182,23 +182,77 @@ public class ExportEducationalPlan extends PdfPageEventHelper {
         table.addCell(CreateEmptyCell());
     }
     
-    public String exportToPDF(ArrayList<EducationalPlan> educationalPlan, ArrayList<EducationalPlanHoursAndCredits> educationalPlanHours,
-            String webSiteLocation, String localPath) throws DocumentException, FileNotFoundException
+    public void AddTableRow(PdfPTable table, EducationalPlan row)
     {
-        Document document = new Document(PageSize.A4, 40, 40, 110, 70); //left right top bottom
-        PdfPTable table = null;
-        String file = webSiteLocation + localPath;
+    	table.addCell(CreateBodyCell(row.materie, Element.ALIGN_LEFT, tableBodyFonts.get(1)));
+        table.addCell(CreateBodyCell(row.cod_disciplina, Element.ALIGN_CENTER, tableBodyFonts.get(1)));
+        table.addCell(CreateBodyCell(row.denumire_tip_disciplina, Element.ALIGN_CENTER, tableBodyFonts.get(1)));
+        table.addCell(CreateBodyCell(row.denumire_categorie_disciplina, Element.ALIGN_CENTER, tableBodyFonts.get(1)));
+        if (row.curs == 0)
+        {
+            table.addCell(CreateBodyCell("", Element.ALIGN_CENTER, tableBodyFonts.get(2)));
+        }
+        else
+        {
+            table.addCell(CreateBodyCell(Integer.toString(row.curs), Element.ALIGN_CENTER, tableBodyFonts.get(2)));
+        }
+        if (row.seminar == 0)
+        {
+            table.addCell(CreateBodyCell("", Element.ALIGN_CENTER, tableBodyFonts.get(3)));
+        }
+        else
+        {
+            table.addCell(CreateBodyCell(Integer.toString(row.seminar), Element.ALIGN_CENTER, tableBodyFonts.get(3)));
+        }
+        if (row.lucrari_practice == 0)
+        {
+            table.addCell(CreateBodyCell("", Element.ALIGN_CENTER, tableBodyFonts.get(4)));
+        }
+        else
+        {
+            table.addCell(CreateBodyCell(Integer.toString(row.lucrari_practice), Element.ALIGN_CENTER, tableBodyFonts.get(4)));
+        }
+        if (row.proiect == 0.0f)
+        {
+            table.addCell(CreateBodyCell("", Element.ALIGN_CENTER, tableBodyFonts.get(5)));
+        }
+        else if (row.proiect - (int)row.proiect == 0.0f)
+        {
+            table.addCell(CreateBodyCell(Integer.toString((int)row.proiect), Element.ALIGN_CENTER, tableBodyFonts.get(5)));
+        }
+        else
+        {
+            table.addCell(CreateBodyCell(Float.toString(row.proiect), Element.ALIGN_CENTER, tableBodyFonts.get(5)));
+        }
+        table.addCell(CreateBodyCell(Integer.toString(row.numar_credite), Element.ALIGN_CENTER, tableBodyFonts.get(1)));
+        table.addCell(CreateBodyCell(Character.toString(row.denumire_tip_examinare.charAt(0)), Element.ALIGN_CENTER, tableBodyFonts.get(1)));
+    }
+    
+    public void CopyFile(String file, String webSiteLocation, String localPath)
+    {
+    	File source = new File(file);
         
-        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(file)); 
-        Font newLine = FontFactory.getFont("Arial", 2, Font.BOLD);
-        writer.setPageEvent(this);
+        Path path = Paths.get(webSiteLocation);
+        path = path.getParent().getParent();
         
-        document.open();
+        String tempPath = path.toAbsolutePath().toString() + "\\web" + localPath;
+        File target = new File(tempPath);
         
-        int semester = 0;
-        int year = 0;
-        int fullSemester = 0;
-
+        try
+        {
+            Files.copy(source.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        }
+        catch (IOException ex)
+        {
+        }
+    }
+    
+    public void ParseEducationalPlan(ArrayList<EducationalPlan> educationalPlan, ArrayList<EducationalPlanHoursAndCredits> educationalPlanHours,
+    		Document document, PdfPTable table, int fullSemester) throws DocumentException, IOException
+    {
+    	int semester = 0, year = 0;
+    	Font newLine = FontFactory.getFont("Arial", 2, Font.BOLD);
+    	
         for (EducationalPlan row : educationalPlan)
         {
             if (semester != row.semestru)
@@ -217,93 +271,49 @@ public class ExportEducationalPlan extends PdfPageEventHelper {
                         document.newPage();
                     }
                     year = row.an;
-                    try
-                    {
-                        createParagraph("        ANUL " + romanDigits[year - 1], document, tableBodyFonts.get(6), Element.ALIGN_LEFT);
-                    }
-                    catch (IOException ex)
-                    {
-                        return "Planul de invatamant nu a fost exportat in urma unei erori aparute";
-                    }
-                    document.add(new Phrase("\n", newLine));
+                    createParagraph("        ANUL " + romanDigits[year - 1], document, tableBodyFonts.get(6), Element.ALIGN_LEFT);
                 }
                 
                 semester = row.semestru;
                 fullSemester++;
-                try
-                {
-                    createParagraph("        SEMESTRUL " + romanDigits[semester - 1], document, tableBodyFonts.get(7), Element.ALIGN_LEFT);
-                }
-                catch (IOException ex)
-                {
-                    return "Planul de invatamant nu a fost exportat in urma unei erori aparute";
-                }
+                createParagraph("        SEMESTRUL " + romanDigits[semester - 1], document, tableBodyFonts.get(7), Element.ALIGN_LEFT);
                 document.add(new Phrase("\n", newLine));
                 createTableHeader(table);
             }
             
-            table.addCell(CreateBodyCell(row.materie, Element.ALIGN_LEFT, tableBodyFonts.get(1)));
-            table.addCell(CreateBodyCell(row.cod_disciplina, Element.ALIGN_CENTER, tableBodyFonts.get(1)));
-            table.addCell(CreateBodyCell(row.denumire_tip_disciplina, Element.ALIGN_CENTER, tableBodyFonts.get(1)));
-            table.addCell(CreateBodyCell(row.denumire_categorie_disciplina, Element.ALIGN_CENTER, tableBodyFonts.get(1)));
-            if (row.curs == 0)
-            {
-                table.addCell(CreateBodyCell("", Element.ALIGN_CENTER, tableBodyFonts.get(2)));
-            }
-            else
-            {
-                table.addCell(CreateBodyCell(Integer.toString(row.curs), Element.ALIGN_CENTER, tableBodyFonts.get(2)));
-            }
-            if (row.seminar == 0)
-            {
-                table.addCell(CreateBodyCell("", Element.ALIGN_CENTER, tableBodyFonts.get(3)));
-            }
-            else
-            {
-                table.addCell(CreateBodyCell(Integer.toString(row.seminar), Element.ALIGN_CENTER, tableBodyFonts.get(3)));
-            }
-            if (row.lucrari_practice == 0)
-            {
-                table.addCell(CreateBodyCell("", Element.ALIGN_CENTER, tableBodyFonts.get(4)));
-            }
-            else
-            {
-                table.addCell(CreateBodyCell(Integer.toString(row.lucrari_practice), Element.ALIGN_CENTER, tableBodyFonts.get(4)));
-            }
-            if (row.proiect == 0.0f)
-            {
-                table.addCell(CreateBodyCell("", Element.ALIGN_CENTER, tableBodyFonts.get(5)));
-            }
-            else if (row.proiect - (int)row.proiect == 0.0f)
-            {
-                table.addCell(CreateBodyCell(Integer.toString((int)row.proiect), Element.ALIGN_CENTER, tableBodyFonts.get(5)));
-            }
-            else
-            {
-                table.addCell(CreateBodyCell(Float.toString(row.proiect), Element.ALIGN_CENTER, tableBodyFonts.get(5)));
-            }
-            table.addCell(CreateBodyCell(Integer.toString(row.numar_credite), Element.ALIGN_CENTER, tableBodyFonts.get(1)));
-            table.addCell(CreateBodyCell(Character.toString(row.denumire_tip_examinare.charAt(0)), Element.ALIGN_CENTER, tableBodyFonts.get(1)));
+            AddTableRow(table, row);
         }
+    }
+    
+    public String exportToPDF(ArrayList<EducationalPlan> educationalPlan, ArrayList<EducationalPlanHoursAndCredits> educationalPlanHours,
+            String webSiteLocation, String localPath) throws DocumentException, FileNotFoundException
+    {
+        Document document = new Document(PageSize.A4, 40, 40, 110, 70); //left right top bottom
+        PdfPTable table = null;
+        String file = webSiteLocation + localPath;
+        int fullSemester = 0;
+        
+        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(file)); 
+        
+        writer.setPageEvent(this);
+        
+        document.open();
+        
+        try
+        {
+			ParseEducationalPlan(educationalPlan, educationalPlanHours, document, table, fullSemester);
+		}
+        catch (IOException e)
+        {
+			return "Planul de invatamant nu a fost exportat in urma unei erori aparute";
+		}
+        
+        
         createTableFooter(educationalPlanHours.get(fullSemester - 1), table);
         document.add(table);
         document.close();
         
-        File source = new File(file);
-        
-        Path path = Paths.get(webSiteLocation);
-        path = path.getParent().getParent();
-        
-        String tempPath = path.toAbsolutePath().toString() + "\\web" + localPath;
-        File target = new File(tempPath);
-        
-        try
-        {
-            Files.copy(source.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        }
-        catch (IOException ex)
-        {
-        }
+        CopyFile(file, webSiteLocation, localPath);
         
         return null;
     }

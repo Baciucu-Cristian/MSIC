@@ -155,32 +155,13 @@ public class ExportAllocatedHours extends PdfPageEventHelper{
         }
     }
     
-    public String exportToPDF(ArrayList<Professor> professors, ArrayList<HoursFormations> unallocatedHours,
-            String webSiteLocation, String localPath, int semester) throws DocumentException, FileNotFoundException
+    public void ParseProfessors(ArrayList<Professor> professors)
     {
-        Document document = new Document(PageSize.A4, 40, 40, 60, 70); //left right top bottom
-        
-        String file = webSiteLocation + localPath;
-        
-        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(file)); 
-        Font newLine = FontFactory.getFont("Arial", 2, Font.BOLD);
-        writer.setPageEvent(this);
-        
-        document.open();
-        table1 = new PdfPTable(4);
-        table2 = new PdfPTable(4);
-        table3 = new PdfPTable(3);
-        table4 = new PdfPTable(7);
-        LineSeparator ls = new LineSeparator();
-        createTableOneAndTwoHeader(table1);
-        createTableOneAndTwoHeader(table2);
-        createTableThreeHeader(table3);
-        createTableFourHeader(table4);
-        for (Professor professor : professors)
+    	LineSeparator ls = new LineSeparator();
+    	for (Professor professor : professors)
         {
             Phrase phrase = new Phrase();
             phrase.add(new Chunk("     POST - BAZA\n\n", tableBodyFonts.get(3)));
-
             if (!professor.allocatedHours.post_normal.equals(""))
             {
                 phrase.add(new Chunk(professor.allocatedHours.post_normal.replaceAll("<br />", "\n") + "\n", tableBodyFonts.get(2)));
@@ -202,24 +183,10 @@ public class ExportAllocatedHours extends PdfPageEventHelper{
             {
                 phrase.add(new Chunk(ls));
                 phrase.add(new Chunk("\n\n     ORE NEREPARTIZATE:\n\n", tableBodyFonts.get(3)));
-
-                if (professor.curs > 0)
-                {
-                    phrase.add(new Chunk("CURS - " + professor.curs + "\n", tableBodyFonts.get(4)));
-                }
-                if (professor.seminar > 0)
-                {
-                    phrase.add(new Chunk("SEMINAR - " + professor.seminar + "\n", tableBodyFonts.get(5)));
-                }
-                if (professor.lucrari_practice > 0)
-                {
-                    phrase.add(new Chunk("LABORATOR - " + professor.lucrari_practice + "\n", tableBodyFonts.get(6)));
-                }
-                if (professor.proiect > 0)
-                {
-                    phrase.add(new Chunk("PROIECT - " + professor.proiect + "\n", tableBodyFonts.get(7)));
-                }
-
+                phrase.add(new Chunk("CURS - " + professor.curs + "\n", tableBodyFonts.get(4)));
+                phrase.add(new Chunk("SEMINAR - " + professor.seminar + "\n", tableBodyFonts.get(5)));
+                phrase.add(new Chunk("LABORATOR - " + professor.lucrari_practice + "\n", tableBodyFonts.get(6)));
+                phrase.add(new Chunk("PROIECT - " + professor.proiect + "\n", tableBodyFonts.get(7)));
                 phrase.add(new Chunk("TOTAL - " + (professor.curs + professor.seminar + professor.lucrari_practice + professor.proiect), tableBodyFonts.get(8)));
                 table2.addCell(CreateBodyCell(professor.nume, Element.ALIGN_CENTER, tableBodyFonts.get(1)));
                 table2.addCell(CreateBodyCell(professor.CNP, Element.ALIGN_LEFT, tableBodyFonts.get(2)));
@@ -233,8 +200,11 @@ public class ExportAllocatedHours extends PdfPageEventHelper{
                 table3.addCell(CreateBodyCell(professor.departament.denumire, Element.ALIGN_LEFT, tableBodyFonts.get(2)));
             }
         }
-        
-        String comSubjects;
+    }
+    
+    public void ParseHoursFormation(ArrayList<HoursFormations> unallocatedHours)
+    {
+    	String comSubjects;
         for (HoursFormations item : unallocatedHours)
         {
             table4.addCell(CreateBodyCell(Integer.toString(item.id), Element.ALIGN_CENTER, tableBodyFonts.get(1)));
@@ -252,6 +222,51 @@ public class ExportAllocatedHours extends PdfPageEventHelper{
             table4.addCell(CreateBodyCell(comSubjects, Element.ALIGN_LEFT, tableBodyFonts.get(2)));
             table4.addCell(CreateBodyCell(Integer.toString(item.ore), Element.ALIGN_CENTER, tableBodyFonts.get(2)));
         }
+    }
+    
+    public void CopyFile(String file, String webSiteLocation, String localPath)
+    {
+    	File source = new File(file);
+        
+        Path path = Paths.get(webSiteLocation);
+        path = path.getParent().getParent();
+        
+        String tempPath = path.toAbsolutePath().toString() + "\\web" + localPath;
+        File target = new File(tempPath);
+        
+        try
+        {
+            Files.copy(source.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        }
+        catch (IOException ex)
+        {
+        }
+    }
+    
+    public String exportToPDF(ArrayList<Professor> professors, ArrayList<HoursFormations> unallocatedHours,
+            String webSiteLocation, String localPath, int semester) throws DocumentException, FileNotFoundException
+    {
+        Document document = new Document(PageSize.A4, 40, 40, 60, 70); //left right top bottom
+        
+        String file = webSiteLocation + localPath;
+        
+        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(file)); 
+        Font newLine = FontFactory.getFont("Arial", 2, Font.BOLD);
+        writer.setPageEvent(this);
+        
+        document.open();
+        table1 = new PdfPTable(4);
+        table2 = new PdfPTable(4);
+        table3 = new PdfPTable(3);
+        table4 = new PdfPTable(7);
+        
+        createTableOneAndTwoHeader(table1);
+        createTableOneAndTwoHeader(table2);
+        createTableThreeHeader(table3);
+        createTableFourHeader(table4);
+        
+        ParseProfessors(professors);
+        ParseHoursFormation(unallocatedHours);
         
         try
         {
@@ -284,21 +299,7 @@ public class ExportAllocatedHours extends PdfPageEventHelper{
         }
         document.close();
         
-        File source = new File(file);
-        
-        Path path = Paths.get(webSiteLocation);
-        path = path.getParent().getParent();
-        
-        String tempPath = path.toAbsolutePath().toString() + "\\web" + localPath;
-        File target = new File(tempPath);
-        
-        try
-        {
-            Files.copy(source.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        }
-        catch (IOException ex)
-        {
-        }
+        CopyFile(file, webSiteLocation, localPath);
         
         return null;
     }
