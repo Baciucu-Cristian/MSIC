@@ -33,15 +33,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 
 public class ExportEducationalPlan extends PdfPageEventHelper { 
-    Font headerFont;
-    Font yearFont;
-    Font semesterFont;
-    Font tableHeaderFont;
-    Font tableBodyFont1;
-    Font tableBodyFont2;
-    Font tableBodyFont3;
-    Font tableBodyFont4;
-    Font tableBodyFont5;
+    ArrayList<Font> tableBodyFonts;
     String departament_name;
     String departament_id;
     String specializare;
@@ -51,23 +43,23 @@ public class ExportEducationalPlan extends PdfPageEventHelper {
     public String director_departament;
     public String decan;
     String[] romanDigits;
-    PdfPTable table;
     
     public ExportEducationalPlan(String departament_name, String departament_id, String specializare, int ani)
     {
-        headerFont = FontFactory.getFont("Arial", 9, Font.BOLD);
-        yearFont = FontFactory.getFont("Arial", 14, Font.BOLD);
-        semesterFont = FontFactory.getFont("Arial", 12, Font.BOLD);
-        tableHeaderFont = FontFactory.getFont("Arial", 9, Font.BOLD, BaseColor.WHITE);
-        tableBodyFont1 = FontFactory.getFont("Arial", 8, Font.BOLD);
-        tableBodyFont2 = FontFactory.getFont("Arial", 8, Font.BOLD);
-        tableBodyFont3 = FontFactory.getFont("Arial", 8, Font.BOLD);
-        tableBodyFont4 = FontFactory.getFont("Arial", 8, Font.BOLD);
-        tableBodyFont5 = FontFactory.getFont("Arial", 8, Font.BOLD);
-        tableBodyFont2.setColor(new BaseColor(0xff, 0x00, 0x00));
-        tableBodyFont3.setColor(new BaseColor(0x00, 0x00, 0xff));
-        tableBodyFont4.setColor(new BaseColor(0x8a, 0x2b, 0xe2));
-        tableBodyFont5.setColor(new BaseColor(0x98, 0x5f, 0x0d));
+    	tableBodyFonts = new ArrayList<Font>();
+        tableBodyFonts.add(FontFactory.getFont("Arial", 9, Font.BOLD));
+        tableBodyFonts.add(FontFactory.getFont("Arial", 8, Font.BOLD));
+        tableBodyFonts.add(FontFactory.getFont("Arial", 8, Font.BOLD));
+        tableBodyFonts.add(FontFactory.getFont("Arial", 8, Font.BOLD));
+        tableBodyFonts.add(FontFactory.getFont("Arial", 8, Font.BOLD));
+        tableBodyFonts.add(FontFactory.getFont("Arial", 8, Font.BOLD));
+        tableBodyFonts.add(FontFactory.getFont("Arial", 14, Font.BOLD));
+        tableBodyFonts.add(FontFactory.getFont("Arial", 12, Font.BOLD));
+        tableBodyFonts.add(FontFactory.getFont("Arial", 9, Font.BOLD, BaseColor.WHITE));
+        tableBodyFonts.get(2).setColor(new BaseColor(0xff, 0x00, 0x00));
+        tableBodyFonts.get(3).setColor(new BaseColor(0x00, 0x00, 0xff));
+        tableBodyFonts.get(4).setColor(new BaseColor(0x8a, 0x2b, 0xe2));
+        tableBodyFonts.get(5).setColor(new BaseColor(0x98, 0x5f, 0x0d));
         this.departament_name = departament_name;
         this.departament_id = departament_id;
         this.specializare = specializare;
@@ -85,21 +77,21 @@ public class ExportEducationalPlan extends PdfPageEventHelper {
     
     @Override
     public void onStartPage(PdfWriter writer, Document document) {
-        ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_LEFT, new Phrase("UNIVERSITATEA DIN CRAIOVA", headerFont), 30, 810, 0);
-        ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_LEFT, new Phrase(facultate, headerFont), 30, 795, 0);
-        ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_LEFT, new Phrase("Departamentul: " + departament_name + " (" + departament_id + ")", headerFont), 30, 780, 0);
-        ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_LEFT, new Phrase("Programul de studii : " + specializare, headerFont), 30, 765, 0);
-        ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_LEFT, new Phrase("Durata studiilor : " + ani, headerFont), 30, 750, 0);
+        ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_LEFT, new Phrase("UNIVERSITATEA DIN CRAIOVA", tableBodyFonts.get(0)), 30, 810, 0);
+        ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_LEFT, new Phrase(facultate, tableBodyFonts.get(0)), 30, 795, 0);
+        ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_LEFT, new Phrase("Departamentul: " + departament_name + " (" + departament_id + ")", tableBodyFonts.get(0)), 30, 780, 0);
+        ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_LEFT, new Phrase("Programul de studii : " + specializare, tableBodyFonts.get(0)), 30, 765, 0);
+        ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_LEFT, new Phrase("Durata studiilor : " + ani, tableBodyFonts.get(0)), 30, 750, 0);
     }
 
     @Override
     public void onEndPage(PdfWriter writer, Document document) {
-        ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_LEFT, new Phrase("RECTOR,", headerFont), 30, 55, 0);
-        ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_CENTER, new Phrase("DIRECTOR DEPARTAMENT,", headerFont), document.getPageSize().getWidth() / 2, 55, 0);
-        ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_RIGHT, new Phrase("DECAN,", headerFont), document.getPageSize().getWidth() - 30, 55, 0);
-        ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_LEFT, new Phrase(rector, headerFont), 30, 40, 0);
-        ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_CENTER, new Phrase(director_departament, headerFont), document.getPageSize().getWidth() / 2, 40, 0);
-        ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_RIGHT, new Phrase(decan, headerFont), document.getPageSize().getWidth() - 30, 40, 0);
+        ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_LEFT, new Phrase("RECTOR,", tableBodyFonts.get(0)), 30, 55, 0);
+        ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_CENTER, new Phrase("DIRECTOR DEPARTAMENT,", tableBodyFonts.get(0)), document.getPageSize().getWidth() / 2, 55, 0);
+        ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_RIGHT, new Phrase("DECAN,", tableBodyFonts.get(0)), document.getPageSize().getWidth() - 30, 55, 0);
+        ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_LEFT, new Phrase(rector, tableBodyFonts.get(0)), 30, 40, 0);
+        ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_CENTER, new Phrase(director_departament, tableBodyFonts.get(0)), document.getPageSize().getWidth() / 2, 40, 0);
+        ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_RIGHT, new Phrase(decan, tableBodyFonts.get(0)), document.getPageSize().getWidth() - 30, 40, 0);
         ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_CENTER, new Phrase(Integer.toString(document.getPageNumber())), document.getPageSize().getWidth() / 2, 15, 0);
     }
     
@@ -112,7 +104,7 @@ public class ExportEducationalPlan extends PdfPageEventHelper {
     
     public PdfPCell CreateHeaderCell(String text, BaseColor backgroundColor)
     {
-        PdfPCell cell = new PdfPCell(new Phrase(text, tableHeaderFont));
+        PdfPCell cell = new PdfPCell(new Phrase(text, tableBodyFonts.get(8)));
         cell.setBackgroundColor(backgroundColor);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -143,7 +135,7 @@ public class ExportEducationalPlan extends PdfPageEventHelper {
         return cell;
     }
     
-    public void createTableHeader() throws DocumentException
+    public void createTableHeader(PdfPTable table) throws DocumentException
     {
         BaseColor color = new BaseColor(0x16, 0x7f, 0x92);
         table = new PdfPTable(10);
@@ -164,26 +156,26 @@ public class ExportEducationalPlan extends PdfPageEventHelper {
         table.setWidths(columnWidths);
     }
     
-    public void createTableFooter(EducationalPlanHoursAndCredits hours)
+    public void createTableFooter(EducationalPlanHoursAndCredits hours, PdfPTable table)
     {
         BaseColor color = new BaseColor(0x9a, 0xcd, 0x32);
         table.addCell(CreateEmptyCell());
         table.addCell(CreateEmptyCell());
         table.addCell(CreateEmptyCell());
-        PdfPCell totalCell = CreateFooterCell("TOTAL", tableBodyFont1, color);
+        PdfPCell totalCell = CreateFooterCell("TOTAL", tableBodyFonts.get(1), color);
         totalCell.setRowspan(2);
         table.addCell(totalCell);
-        table.addCell(CreateFooterCell(Integer.toString(hours.course), tableBodyFont2, color));
-        table.addCell(CreateFooterCell(Integer.toString(hours.seminar), tableBodyFont3, color));
-        table.addCell(CreateFooterCell(Integer.toString(hours.laboratory), tableBodyFont4, color));
-        table.addCell(CreateFooterCell(Integer.toString(hours.project), tableBodyFont5, color));
-        table.addCell(CreateFooterCell(Integer.toString(hours.credits), tableBodyFont1, color));
+        table.addCell(CreateFooterCell(Integer.toString(hours.course), tableBodyFonts.get(2), color));
+        table.addCell(CreateFooterCell(Integer.toString(hours.seminar), tableBodyFonts.get(3), color));
+        table.addCell(CreateFooterCell(Integer.toString(hours.laboratory), tableBodyFonts.get(4), color));
+        table.addCell(CreateFooterCell(Integer.toString(hours.project), tableBodyFonts.get(5), color));
+        table.addCell(CreateFooterCell(Integer.toString(hours.credits), tableBodyFonts.get(1), color));
         table.addCell(CreateEmptyCell());
         
         table.addCell(CreateEmptyCell());
         table.addCell(CreateEmptyCell());
         table.addCell(CreateEmptyCell());
-        PdfPCell sumCell = CreateFooterCell(Integer.toString(hours.course + hours.seminar + hours.laboratory + hours.project), tableBodyFont1, color);
+        PdfPCell sumCell = CreateFooterCell(Integer.toString(hours.course + hours.seminar + hours.laboratory + hours.project), tableBodyFonts.get(1), color);
         sumCell.setColspan(4);
         table.addCell(sumCell);
         table.addCell(CreateEmptyCell());
@@ -194,7 +186,7 @@ public class ExportEducationalPlan extends PdfPageEventHelper {
             String webSiteLocation, String localPath) throws DocumentException, FileNotFoundException
     {
         Document document = new Document(PageSize.A4, 40, 40, 110, 70); //left right top bottom
-        
+        PdfPTable table = null;
         String file = webSiteLocation + localPath;
         
         PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(file)); 
@@ -213,7 +205,7 @@ public class ExportEducationalPlan extends PdfPageEventHelper {
             {
                 if (semester != 0)
                 {
-                    createTableFooter(educationalPlanHours.get(fullSemester - 1));
+                    createTableFooter(educationalPlanHours.get(fullSemester - 1), table);
                     document.add(table);
                     document.add(new Phrase("\n", newLine));
                 }
@@ -227,7 +219,7 @@ public class ExportEducationalPlan extends PdfPageEventHelper {
                     year = row.an;
                     try
                     {
-                        createParagraph("        ANUL " + romanDigits[year - 1], document, yearFont, Element.ALIGN_LEFT);
+                        createParagraph("        ANUL " + romanDigits[year - 1], document, tableBodyFonts.get(6), Element.ALIGN_LEFT);
                     }
                     catch (IOException ex)
                     {
@@ -240,60 +232,60 @@ public class ExportEducationalPlan extends PdfPageEventHelper {
                 fullSemester++;
                 try
                 {
-                    createParagraph("        SEMESTRUL " + romanDigits[semester - 1], document, semesterFont, Element.ALIGN_LEFT);
+                    createParagraph("        SEMESTRUL " + romanDigits[semester - 1], document, tableBodyFonts.get(7), Element.ALIGN_LEFT);
                 }
                 catch (IOException ex)
                 {
                     return "Planul de invatamant nu a fost exportat in urma unei erori aparute";
                 }
                 document.add(new Phrase("\n", newLine));
-                createTableHeader();
+                createTableHeader(table);
             }
             
-            table.addCell(CreateBodyCell(row.materie, Element.ALIGN_LEFT, tableBodyFont1));
-            table.addCell(CreateBodyCell(row.cod_disciplina, Element.ALIGN_CENTER, tableBodyFont1));
-            table.addCell(CreateBodyCell(row.denumire_tip_disciplina, Element.ALIGN_CENTER, tableBodyFont1));
-            table.addCell(CreateBodyCell(row.denumire_categorie_disciplina, Element.ALIGN_CENTER, tableBodyFont1));
+            table.addCell(CreateBodyCell(row.materie, Element.ALIGN_LEFT, tableBodyFonts.get(1)));
+            table.addCell(CreateBodyCell(row.cod_disciplina, Element.ALIGN_CENTER, tableBodyFonts.get(1)));
+            table.addCell(CreateBodyCell(row.denumire_tip_disciplina, Element.ALIGN_CENTER, tableBodyFonts.get(1)));
+            table.addCell(CreateBodyCell(row.denumire_categorie_disciplina, Element.ALIGN_CENTER, tableBodyFonts.get(1)));
             if (row.curs == 0)
             {
-                table.addCell(CreateBodyCell("", Element.ALIGN_CENTER, tableBodyFont2));
+                table.addCell(CreateBodyCell("", Element.ALIGN_CENTER, tableBodyFonts.get(2)));
             }
             else
             {
-                table.addCell(CreateBodyCell(Integer.toString(row.curs), Element.ALIGN_CENTER, tableBodyFont2));
+                table.addCell(CreateBodyCell(Integer.toString(row.curs), Element.ALIGN_CENTER, tableBodyFonts.get(2)));
             }
             if (row.seminar == 0)
             {
-                table.addCell(CreateBodyCell("", Element.ALIGN_CENTER, tableBodyFont3));
+                table.addCell(CreateBodyCell("", Element.ALIGN_CENTER, tableBodyFonts.get(3)));
             }
             else
             {
-                table.addCell(CreateBodyCell(Integer.toString(row.seminar), Element.ALIGN_CENTER, tableBodyFont3));
+                table.addCell(CreateBodyCell(Integer.toString(row.seminar), Element.ALIGN_CENTER, tableBodyFonts.get(3)));
             }
             if (row.lucrari_practice == 0)
             {
-                table.addCell(CreateBodyCell("", Element.ALIGN_CENTER, tableBodyFont4));
+                table.addCell(CreateBodyCell("", Element.ALIGN_CENTER, tableBodyFonts.get(4)));
             }
             else
             {
-                table.addCell(CreateBodyCell(Integer.toString(row.lucrari_practice), Element.ALIGN_CENTER, tableBodyFont4));
+                table.addCell(CreateBodyCell(Integer.toString(row.lucrari_practice), Element.ALIGN_CENTER, tableBodyFonts.get(4)));
             }
             if (row.proiect == 0.0f)
             {
-                table.addCell(CreateBodyCell("", Element.ALIGN_CENTER, tableBodyFont5));
+                table.addCell(CreateBodyCell("", Element.ALIGN_CENTER, tableBodyFonts.get(5)));
             }
             else if (row.proiect - (int)row.proiect == 0.0f)
             {
-                table.addCell(CreateBodyCell(Integer.toString((int)row.proiect), Element.ALIGN_CENTER, tableBodyFont5));
+                table.addCell(CreateBodyCell(Integer.toString((int)row.proiect), Element.ALIGN_CENTER, tableBodyFonts.get(5)));
             }
             else
             {
-                table.addCell(CreateBodyCell(Float.toString(row.proiect), Element.ALIGN_CENTER, tableBodyFont5));
+                table.addCell(CreateBodyCell(Float.toString(row.proiect), Element.ALIGN_CENTER, tableBodyFonts.get(5)));
             }
-            table.addCell(CreateBodyCell(Integer.toString(row.numar_credite), Element.ALIGN_CENTER, tableBodyFont1));
-            table.addCell(CreateBodyCell(Character.toString(row.denumire_tip_examinare.charAt(0)), Element.ALIGN_CENTER, tableBodyFont1));
+            table.addCell(CreateBodyCell(Integer.toString(row.numar_credite), Element.ALIGN_CENTER, tableBodyFonts.get(1)));
+            table.addCell(CreateBodyCell(Character.toString(row.denumire_tip_examinare.charAt(0)), Element.ALIGN_CENTER, tableBodyFonts.get(1)));
         }
-        createTableFooter(educationalPlanHours.get(fullSemester - 1));
+        createTableFooter(educationalPlanHours.get(fullSemester - 1), table);
         document.add(table);
         document.close();
         
