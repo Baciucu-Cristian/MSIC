@@ -61,6 +61,7 @@ public class ExportEducationalPlan extends PdfPageEventHelper {
         tableBodyFonts.get(4).setColor(new BaseColor(0x8a, 0x2b, 0xe2));
         tableBodyFonts.get(5).setColor(new BaseColor(0x98, 0x5f, 0x0d));
         exportBase = new ExportEducationalPlanBase();
+        exportBase.tableBodyFonts = tableBodyFonts;
         this.departament_name = departament_name;
         this.departament_id = departament_id;
         this.specializare = specializare;
@@ -161,8 +162,9 @@ public class ExportEducationalPlan extends PdfPageEventHelper {
     }
     
     public void ParseEducationalPlan(ArrayList<EducationalPlan> educationalPlan, ArrayList<EducationalPlanHoursAndCredits> educationalPlanHours,
-    		Document document, PdfPTable table, int fullSemester) throws DocumentException, IOException
+    		Document document, int fullSemester) throws DocumentException, IOException
     {
+    	PdfPTable table = null;
     	String[] romanDigits = new String[]{"I", "II", "III", "IV", "V", "VI"};
     	int semester = 0, year = 0;
     	Font newLine = FontFactory.getFont("Arial", 2, Font.BOLD);
@@ -192,18 +194,19 @@ public class ExportEducationalPlan extends PdfPageEventHelper {
                 fullSemester++;
                 exportBase.createParagraph("        SEMESTRUL " + romanDigits[semester - 1], document, tableBodyFonts.get(7), Element.ALIGN_LEFT);
                 document.add(new Phrase("\n", newLine));
-                exportBase.createTableHeader(table);
+                table = exportBase.createTableHeader();
+                
             }
-            
             AddTableRow(table, row);
         }
+        exportBase.createTableFooter(educationalPlanHours.get(fullSemester - 1), table);
+        document.add(table);
     }
     
     public String exportToPDF(ArrayList<EducationalPlan> educationalPlan, ArrayList<EducationalPlanHoursAndCredits> educationalPlanHours,
             String webSiteLocation, String localPath) throws DocumentException, FileNotFoundException
     {
         Document document = new Document(PageSize.A4, 40, 40, 110, 70); //left right top bottom
-        PdfPTable table = null;
         String file = webSiteLocation + localPath;
         int fullSemester = 0;
         
@@ -215,16 +218,13 @@ public class ExportEducationalPlan extends PdfPageEventHelper {
         
         try
         {
-			ParseEducationalPlan(educationalPlan, educationalPlanHours, document, table, fullSemester);
+			ParseEducationalPlan(educationalPlan, educationalPlanHours, document, fullSemester);
 		}
         catch (IOException e)
         {
 			return "Planul de invatamant nu a fost exportat in urma unei erori aparute";
 		}
         
-        
-        exportBase.createTableFooter(educationalPlanHours.get(fullSemester - 1), table);
-        document.add(table);
         document.close();
         
         CopyFile(file, webSiteLocation, localPath);

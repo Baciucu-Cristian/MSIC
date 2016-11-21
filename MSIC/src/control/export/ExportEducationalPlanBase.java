@@ -8,6 +8,7 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
+import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
@@ -59,10 +60,10 @@ public class ExportEducationalPlanBase {
         return cell;
     }
     
-    public void createTableHeader(PdfPTable table) throws DocumentException
+    public PdfPTable createTableHeader() throws DocumentException
     {
         BaseColor color = new BaseColor(0x16, 0x7f, 0x92);
-        table = new PdfPTable(10);
+        PdfPTable table = new PdfPTable(10);
         table.setWidthPercentage(100.0f);
         table.addCell(CreateHeaderCell("Materie", color));
         table.addCell(CreateHeaderCell("Cod", color));
@@ -78,6 +79,7 @@ public class ExportEducationalPlanBase {
         table.setSplitLate(false);
         float[] columnWidths = new float[] {31f, 10f, 13f, 13f, 4f, 4f, 4f, 4f, 7f, 10f};
         table.setWidths(columnWidths);
+        return table;
     }
     
     public void createTableFooter(EducationalPlanHoursAndCredits hours, PdfPTable table)
