@@ -12,10 +12,12 @@ import java.util.logging.Logger;
 import javax.servlet.GenericServlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+@WebServlet("/ProfessorTableServlet")
 public class ProfessorTableServlet extends HttpServlet {
 
     MYSQLCMD sqlcmd;
